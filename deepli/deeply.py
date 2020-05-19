@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function, unicode_literals
-
+import subprocess
 from PyInquirer import style_from_dict, Token, prompt, Separator
 from pprint import pprint
 import sys
