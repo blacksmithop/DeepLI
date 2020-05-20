@@ -6,9 +6,11 @@ from pprint import pprint
 import sys
 from pyfiglet import Figlet
 import argparse
+import os
 
 
-class deepli(object):
+
+class Deepli(object):
     """
     Code that runs deepli
     """
@@ -17,9 +19,9 @@ class deepli(object):
         {
             Token.Separator: '#cc5454',
             Token.QuestionMark: '#673ab7 bold',
-            Token.Selected: '#cc5454',  
+            Token.Selected: '#cc5454',
             Token.Pointer: '#673ab7 bold',
-            Token.Instruction: '',  
+            Token.Instruction: '',
             Token.Answer: '#f44336 bold',
             Token.Question: '',
         }
@@ -35,6 +37,9 @@ class deepli(object):
 
     fig = Figlet(font='big')
 
+    homedir = os.environ['HOME']
+    os.chdir(homedir)
+
     @classmethod
     def printDeepli(cls):
         print(cls.fig.renderText('DeepLI'))
@@ -44,12 +49,34 @@ class deepli(object):
         return commandDict['command'].split(" ")
 
     @classmethod
+    def exitDeepli(cls):
+        exit()
+
+    @classmethod
+    def changeDirectory(cls, dir):
+        try:
+            if len(dir) <= 1:
+                cd = os.chdir(cls.homedir)
+            else:
+                cd = os.chdir(dir[1])
+        except Exception as e:
+            print(str(e))
+
+
+
+    @classmethod
     def deeplilogic(cls):
         try:
             answers = prompt(cls.questions,style=cls.style)
             #AI logic call for nlp2command will happen here someday!
             command = cls.splitCommands(answers)
-            k = subprocess.call(command)
+            if command[0].encode("utf-8") == 'exit':
+                exit = cls.exitDeepli()
+            elif command[0].encode("utf-8") == 'cd':
+                cd = cls.changeDirectory(command)
+            else:
+                k = subprocess.call(command)
+
         except Exception as e:
             print(str(e))
 
@@ -59,4 +86,4 @@ class deepli(object):
         while(True):
             cls.deeplilogic()
 
-deepli.run()
+Deepli.run()
