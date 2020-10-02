@@ -1,5 +1,6 @@
 from urllib import request
-from re import findall
+from re import findall, search
+from bs4 import BeautifulSoup
 
 
 def Tag_To_Url(base: str, tag: str, page: int):
@@ -13,25 +14,37 @@ def Tag_To_Url(base: str, tag: str, page: int):
     yield tag_url
 
 
-def Link_To_JSON(urls: list):
-    url = urls[0]
+def Link_To_Data(urls: list):
+    url = urls[0] #test
+    platform = search('https?://([A-Za-z_0-9.-]+).com*', url).group(1)
+    print(f"Platform: {platform}")
     with request.urlopen(url) as response:
         content = response.read()
-    title = findall(r'hyperlink">(.*?)</a>', str(content))[0]
-    code = findall(r'<pre><code>(.*?)</code>', str(content))
-    code = [c.replace('\\n','') for c in code]
-    is_verified = findall(r'"answer accepted-answer"', str(content))
-    if is_verified:
-        is_verified = True
-    else:
-        is_verified = False
-    result = {
-        'title': title,
-        'code': code,
-        'verfied': is_verified
-    }
-    return result
+    soup = BeautifulSoup(str(content), 'html.parser')
+    question = soup.find("a", {"class": "question-hyperlink"})
+    print(f"Question: {question.text}") #title of the question
 
+    source_verified = False
+    verified_question = soup.find("div", {"class": "answer accepted-answer"})
+    if verified_question:
+        source_verified = True #is an accepted answer
+    print(f"Source_Verified: {source_verified}")
+
+    manual_verified = False
+    print(f"Manual_Verified: {manual_verified}") #to be done later
+
+    answer = soup.find("div", {"class": "answercell post-layout--right"})
+    code_blocks = answer.find_all('code')
+    print("Answer: (commands only)")
+    code_blocks = [code.text.replace('\\n', '') for code in code_blocks if len(code.text.split())!=1]
+    for code in code_blocks:
+        print(code)
+    if source_verified:
+        answer_id = verified_question.get('id')
+        answer_id = findall(r'\d+', answer_id)[0]
+        url = f"https://{platform}/a/{answer_id}"
+    print(f"Url: {url}")
+        
 
 platform_to_tag = {
     "askubuntu": [
@@ -45,12 +58,17 @@ platform_to_tag = {
 PAGE_MAX = 3 #number of pages to consider
 tag_urls = {}
 
-for platform in platform_to_tag:
-    tags = platform_to_tag[platform]
-    for tag in tags:
-        tag_urls[tag] = []
-        for i in range(1, PAGE_MAX): #PAGE_MAX number of list of urls per iteration
 
-            for url in Tag_To_Url(base=platform, tag=tag, page=i):
-                tag_urls[tag].extend(url)
-        print(f"Found {len(tag_urls[tag])} urls for tag {tag} in {platform} searching {PAGE_MAX} pages")
+def main():
+    for platform in platform_to_tag:
+        tags = platform_to_tag[platform]
+        for tag in tags:
+            tag_urls[tag] = []
+            for i in range(1, PAGE_MAX+1): #PAGE_MAX number of list of urls per iteration
+                for url in Tag_To_Url(base=platform, tag=tag, page=i):
+                    tag_urls[tag].extend(url)
+            print(f"Found {len(tag_urls[tag])} urls for tag {tag} in {platform} searching {PAGE_MAX} pages")
+
+
+Link_To_Data(['https://askubuntu.com/questions/17823/how-to-list-all-installed-packages'])
+
