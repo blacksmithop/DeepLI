@@ -48,7 +48,7 @@ class DataSetGen:
         self.soup = BeautifulSoup(str(content), 'html.parser')
 
         question = self.get_question()
-        source_verified = self.is_verified()
+        source_verified, url = self.is_verified()
         manual_verified = False
         if not source_verified:  # skip over ones without accepted answers
             return None
@@ -96,7 +96,10 @@ class DataSetGen:
         for tag in self.tag_urls:
             _urls = self.tag_urls[tag]
             for url in _urls:
-                _dataset.append(self.url_to_data(url=url))
+                data = self.url_to_data(url=url)
+                if data is None:
+                    continue
+                _dataset.append()
             print(f"Collected data from {len(_urls)} urls with tag {tag}")
         return _dataset
 
