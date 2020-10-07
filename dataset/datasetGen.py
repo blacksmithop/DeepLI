@@ -107,7 +107,7 @@ class DataSetGen:
 
     def write_to_csv(self):
         with open('dataset.csv', 'w') as data:
-            fields = list(self.data_set[0].values())
+            fields = list(self.data_set[0].keys())
             data_writer = DictWriter(data, fieldnames=fields)
             for item in self.data_set:
                 data_writer.writerow(item)
