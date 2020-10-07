@@ -101,7 +101,7 @@ class DataSetGen:
                 data = self.url_to_data(url=url)
                 if data is None:
                     continue
-                _dataset.append()
+                _dataset.append(data)
             print(f"Collected data from {len(_urls)} urls with tag {tag}")
         self.data_set = _dataset
 
