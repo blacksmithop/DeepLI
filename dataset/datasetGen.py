@@ -1,7 +1,7 @@
 from urllib import request
 from re import findall, search
 from bs4 import BeautifulSoup
-from csv import writer, QUOTE_MINIMAL
+from csv import DictWriter
 
 
 class DataSetGen:
@@ -107,9 +107,8 @@ class DataSetGen:
 
     def write_to_csv(self):
         with open('dataset.csv', 'w') as data:
-            data_writer = writer(data, delimiter=',', quotechar='"', quoting=QUOTE_MINIMAL)
-            data_writer.writerow(['question', 'answer', 'source_verified',
-                                  'manual_verified', 'url', 'final_answer'])
+            fields = list(self.data_set[0].values())
+            data_writer = DictWriter(data, fieldnames=fields)
             for item in self.data_set:
                 data_writer.writerow(item)
 
