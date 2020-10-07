@@ -55,7 +55,7 @@ class DataSetGen:
         if not source_verified:  # skip over ones without accepted answers
             return None
         answer = self.get_answer()
-        final_answer = None
+        final_answer = False
 
         # answer schema as a dict - to be changed to csv
         post = {
