@@ -1,3 +1,4 @@
+question,answer,source_verified,manual_verified,url,final_answer
 How to list all installed packages,"apt list --installed
 dpkg --get-selections | grep -v deinstall
 dpkg --get-selections | grep postgres
