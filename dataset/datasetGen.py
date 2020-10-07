@@ -111,7 +111,7 @@ class DataSetGen:
             data_writer.writerow(['question', 'answer', 'source_verified',
                                   'manual_verified', 'url', 'final_answer'])
             for item in self.data_set:
-                data_writer.writerow(list(item.values()))
+                data_writer.writerow(item)
 
 
 if __name__ == '__main__':
