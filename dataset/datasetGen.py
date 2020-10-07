@@ -1,6 +1,7 @@
 from urllib import request
 from re import findall, search
 from bs4 import BeautifulSoup
+from csv import writer, QUOTE_MINIMAL
 
 
 class DataSetGen:
@@ -18,6 +19,7 @@ class DataSetGen:
         self.tag_urls = {}
         self.soup = None
         self.platform = None
+        self.data_set = []
 
     def tag_to_url(self, base: str, tag: str, page: int):
         base = f'https://{base}.com/'
@@ -101,7 +103,15 @@ class DataSetGen:
                     continue
                 _dataset.append()
             print(f"Collected data from {len(_urls)} urls with tag {tag}")
-        return _dataset
+        self.data_set = _dataset
+
+    def write_to_csv(self):
+        with open('dataset.csv', 'w') as data:
+            data_writer = writer(data, delimiter=',', quotechar='"', quoting=QUOTE_MINIMAL)
+            data_writer.writerow(['question', 'answer', 'source_verified',
+                                  'manual_verified', 'url', 'final_answer'])
+            for item in self.data_set:
+                data_writer.writerow(list(item.values()))
 
 
 if __name__ == '__main__':
@@ -113,6 +123,7 @@ if __name__ == '__main__':
         ]
     }
     data_gen.collect_urls()
-    data_set = data_gen.data_from_url()
-    print(len(data_set))
+    data_gen.data_from_url()
+    data_gen.write_to_csv()
+
 
