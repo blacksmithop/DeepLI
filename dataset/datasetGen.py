@@ -78,7 +78,7 @@ class DataSetGen:
         try:
             answer_id = verified.get('id')
             answer_id = findall(r'\d+', answer_id)[0]
-            url = f"https://{self.platform}/a/{answer_id}"  # answer share link
+            url = f"https://{self.platform}.com/a/{answer_id}"  # answer share link
             verified = True
 
         except Exception:
