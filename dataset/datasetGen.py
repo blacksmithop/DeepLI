@@ -114,6 +114,12 @@ class DataSetGen:
                 data_writer.writerow(item)
 
 
+    def sanitize_output(self):
+        with open('dataset.csv', 'r+') as data:
+            content = data.read()
+            content.replace('"', '')
+            data.write(content)
+
 if __name__ == '__main__':
     data_gen = DataSetGen()
     data_gen.PAGE_MAX = 1
@@ -125,5 +131,6 @@ if __name__ == '__main__':
     data_gen.collect_urls()
     data_gen.data_from_url()
     data_gen.write_to_csv()
+    data_gen.sanitize_output()
 
 
